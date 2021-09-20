@@ -1,26 +1,26 @@
-#include "alu.h"
+#include "al.h"
 
-void alu::load()
+void al::load()
 {
     
 }
 
-void alu::stor()
+void al::stor()
 {
 
 }
 
-void alu::prc_output()
+void al::prc_output()
 {
   	data_out = data_in & third & (!second) & first;
 }
 
-void alu::prc_clear()
+void al::prc_clear()
 {
 	data_out = false;
 }
 
-void alu::prc_reset()
+void al::prc_reset()
 {
 	first = second = third = fourth = false;
 }

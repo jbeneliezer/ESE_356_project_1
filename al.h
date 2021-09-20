@@ -1,6 +1,6 @@
 #include "systemc.h"
 
-SC_MODULE(alu)
+SC_MODULE(al)
 {
     sc_in<bool> c1, c2, c3, c4, c5, c6, cin, cop;
     sc_in<sc_uint<8> > imm;
@@ -17,7 +17,7 @@ SC_MODULE(alu)
     void bne();
     void jal();
 
-    SC_CTOR(alu)
+    SC_CTOR(al)
     {
         
     }
