@@ -9,13 +9,6 @@ SC_MODULE(al)
     sc_out<sc_uint<3> > psr_output;
     sc_out<bool> cout;
 
-    void load();
-    void store();
-    void jeq();
-    void jle();
-    void breq();
-    void bne();
-    void jal();
 
     SC_CTOR(al)
     {
