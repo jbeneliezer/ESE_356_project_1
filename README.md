@@ -1,1 +1,1 @@
-all code from ESE_356 Project 1
+code for project 1 of ESE 356 Digital Systems Specification and Modeling
