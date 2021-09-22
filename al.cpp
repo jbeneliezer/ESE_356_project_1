@@ -1,14 +1,14 @@
 #include "systemc.h"
 
-template<int opcode_size, int psr_size, int data_size> class al: public sc_module
+template<int opcode_size, int psr_size, int data_size> class alu: public sc_module
 {
 	public:
 		// Port declarations
     	sc_in<bool> clock, c1, c2, c3, c4, c5, c6;
     	sc_in<sc_uint<opcode_size> > cop;
-    	sc_in<T<sc_uint<data_size> > input_r1, input_r2, input_con;
+    	sc_in<sc_uint<data_size> > input_r1, input_r2, input_imm, input_con;
     	sc_out<sc_uint<data_size> > output_con, output_mdr, output_mar, output_rw;
-    	sc_out<T<sc_uint<psr_size> > output_psr;
+    	sc_out<sc_uint<psr_size> > output_psr;
 
 		// Constructor
 		SC_HAS_PROCESS(alu);
@@ -47,37 +47,39 @@ template<int opcode_size, int psr_size, int data_size> class al: public sc_modul
 
 	private:
 		// Local signals
-    	sc_signal<sc_int<16> > _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out, _alu_out;
+    	sc_signal<sc_uint<data_size> > _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out,
+									   _alu_in1, _alu_in2, _alu_out;
     	sc_signal<bool> _c5_out;
 
 		// Process
 		void prc_c1()
 		{
-			_c1_out1 = c1 ? input_r2: input_r1;
-			_c1_out2 = c1 ? input_r1: input_r2;
+			_c1_out1 = c1 ? input_r2 : input_r1;
+			_c1_out2 = c1 ? input_r1 : input_r2;
 		}
 
 		void prc_c2()
 		{
-			_c2_out = c2 ? 0: _c1_out2;
+			_c2_out = c2 ? 0 : _c1_out2;
 			output_mar = _c2_out;
 			output_con = _c2_out;
+			_alu_in2 = _c2_out;
 		}
 
 		void prc_c3()
 		{
-			_c3_out = c3 ? (_c1_out1[7] ? _c1_out1 | 0xFF00 : _c1_out1 & 0x00FF) : _c1_out1;
+			_c3_out = c3 ? input_imm : _c1_out1;
 		}
 
 		void prc_c4()
 		{
-			_c4_out = c4 ? _c3_out ^ 0xFFFF: _c3_out;
+			_c4_out = c4 ? _c3_out ^ 0xFFFF : _c3_out;
 			output_mdr = _c4_out;
 		}
 
 		void prc_c5()
 		{
-			_c5_out = c5 ? _c4_out[15]: false;
+			_c5_out = c5 ? (bool)_c4_out[data_size-1] : false;
 		}
 
 		void prc_alu()
@@ -122,6 +124,6 @@ template<int opcode_size, int psr_size, int data_size> class al: public sc_modul
 
 		void prc_c6()
 		{
-			output = c6 ? input_con : _alu_out;
+			output_rw = c6 ? input_con : _alu_out;
 		}
 }
