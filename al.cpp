@@ -1,122 +1,119 @@
 #include "systemc.h"
 
-template<typename T> class al: public sc_module
+template<int opcode_size, int psr_size, int data_size> class al: public sc_module
 {
 	public:
 		// Port declarations
-    	sc_in<bool> c1, c2, c3, c4, c5, c6;
-    	sc_in<T<3> > cop;
-    	sc_in<T<16> > input1, input2, fc_input;
-    	sc_out<T<16> > fc_output, mdr_output, mar_output, output;
-    	sc_out<T<3> > psr_output;
-    	sc_out<bool> cout;
+    	sc_in<bool> clock, c1, c2, c3, c4, c5, c6;
+    	sc_in<sc_uint<opcode_size> > cop;
+    	sc_in<T<sc_uint<data_size> > input_r1, input_r2, input_con;
+    	sc_out<sc_uint<data_size> > output_con, output_mdr, output_mar, output_rw;
+    	sc_out<T<sc_uint<psr_size> > output_psr;
 
-		SC_HAS_PROCESS(al);
+		// Constructor
+		SC_HAS_PROCESS(alu);
 
-		al(sc_module_name name) : sc_module(name)
+		alu(sc_module_name name) : sc_module(name)
 		{
         	SC_METHOD(prc_c1)
         	{
-            	sensitive << c1;
+            	sensitive << c1 << input_r1 << input_r2;
         	}
         	SC_METHOD(prc_c2)
         	{
-            	sensitive << c2;
+            	sensitive << c2 << _c1_out2;
         	}
         	SC_METHOD(prc_c3)
         	{
-        	    sensitive << c3
+        	    sensitive << c3 << _c1_out1;
         	}
         	SC_METHOD(prc_c4)
         	{
-        	    sensitive << c4;
+        	    sensitive << c4 << _c3_out;
         	}
         	SC_METHOD(prc_c5)
         	{
-        	    sensitive << c5
+        	    sensitive << c5 << _c4_out;
         	}
         	SC_METHOD(prc_alu)
         	{
-        	    sensitive << cin << cop;
+        	    sensitive << clock.pos();
         	}
         	SC_METHOD(prc_c6)
         	{
-        	    sensitive << c6
+        	    sensitive << c6 << _alu_out;
         	}
-
-        	SC_CTHREAD(prc_clear, clr.pos());
-			SC_CTHREAD(prc_reset, rst.neg());
     	}
 
 	private:
-
 		// Local signals
-    	sc_signal<sc_int<16> > c1_out1, c1_out2, c2_out, c3_out, c4_out, alu_out;
-    	sc_signal<bool> c5_out;
+    	sc_signal<sc_int<16> > _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out, _alu_out;
+    	sc_signal<bool> _c5_out;
 
+		// Process
 		void prc_c1()
 		{
-			c1_out1 = c1 ? input2: input1;
-			c1_out2 = c1 ? input1: input2;
+			_c1_out1 = c1 ? input_r2: input_r1;
+			_c1_out2 = c1 ? input_r1: input_r2;
 		}
 
 		void prc_c2()
 		{
-			c2_out = c2 ? 0: c1_out2;
-			mar_output = c2_out;
-			fc_output = c2_out;
+			_c2_out = c2 ? 0: _c1_out2;
+			output_mar = _c2_out;
+			output_con = _c2_out;
 		}
 
 		void prc_c3()
 		{
-			c3_out = c3 ? (c1_out1[7] ? c1_out1 | 0xFF00 : c1_out1 & 0x00FF) : c1_out1;
+			_c3_out = c3 ? (_c1_out1[7] ? _c1_out1 | 0xFF00 : _c1_out1 & 0x00FF) : _c1_out1;
 		}
 
 		void prc_c4()
 		{
-			c4_out = c4 ? c3_out ^ 0xFFFF: c3_out;
-			mdr_output = c4_out;
+			_c4_out = c4 ? _c3_out ^ 0xFFFF: _c3_out;
+			output_mdr = _c4_out;
 		}
 
 		void prc_c5()
 		{
-			c5_out = c5 ? c4_out[15]: false;
+			_c5_out = c5 ? _c4_out[15]: false;
 		}
 
-		void  prc_alu()
+		void prc_alu()
 		{
 			switch(cop)
 			{
 				case "100":
-					alu_out = (c4_out + c2_out) | c5_out;
-					cout = c4_out[15] & c2_out[15];
-					psr_output[0] = (c4_out[15] == c2_out[15]) ^ alu_out[15];
-					psr_output[1] = alu_out[15];
-					psr_output[2] = (alu_out == 0);
+					_alu_out = (_c4_out + _c2_out) | _c5_out;
+					cout = _c4_out[15] & _c2_out[15];
+					output_psr[0] = (_c4_out[15] == _c2_out[15]) ^ _alu_out[15];
+					output_psr[1] = _alu_out[15];
+					output_psr[2] = (_alu_out == 0);
 					break;
 				case "000":
-					alu_out = c4_out & c2_out;
-					psr_output[0] = '0';
-					psr_output[1] = '0';
-					psr_output[2] = (alu_out == 0);
+					_alu_out = _c4_out & _c2_out;
+					output_psr[0] = '0';
+					output_psr[1] = '0';
+					output_psr[2] = (_alu_out == 0);
 					break;
 				case "001":
-					alu_out = c4_out | c2_out;
-					psr_output[0] = '0';
-					psr_output[1] = '0';
-					psr_output[2] = (alu_out == 0);
+					_alu_out = _c4_out | _c2_out;
+					output_psr[0] = '0';
+					output_psr[1] = '0';
+					output_psr[2] = (_alu_out == 0);
 					break;
 				case "010":
-					alu_out = c4_out ^ c2_out;
-					psr_output[0] = '0';
-					psr_output[1] = '0';
-					psr_output[2] = (alu_out == 0);
+					_alu_out = _c4_out ^ _c2_out;
+					output_psr[0] = '0';
+					output_psr[1] = '0';
+					output_psr[2] = (_alu_out == 0);
 					break;
 				case "011":
 				case "101":
 				case "110":
 				case "111":
-					alu_out = c4_out;
+					_alu_out = __c4_out;
 					break;
 				default:
 					break;
@@ -125,18 +122,6 @@ template<typename T> class al: public sc_module
 
 		void prc_c6()
 		{
-			output = c6 ? fc_input : alu_out;
-		}
-
-		void prc_clear()
-		{
-			fc_output = mdr_output = mar_output = output = 0x0000;
-			psr_output = "000";
-		}
-
-		void prc_reset()
-		{
-			fc_output = mdr_output = mar_output = output = 0x0000;
-			psr_output = "000";
+			output = c6 ? input_con : _alu_out;
 		}
 }
