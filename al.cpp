@@ -75,6 +75,7 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
 		{
 			_c4_out = c4 ? _c3_out ^ 0xFFFF : _c3_out;
 			output_mdr = _c4_out;
+			_alu_in1 = _c4_out;
 		}
 
 		void prc_c5()
