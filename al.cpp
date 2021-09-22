@@ -8,7 +8,7 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
     	sc_in<sc_uint<opcode_size> > cop;
     	sc_in<sc_uint<data_size> > input_r1, input_r2, input_imm, input_con;
     	sc_out<sc_uint<data_size> > output_con, output_mdr, output_mar, output_rw;
-    	sc_out<sc_uint<psr_size> > output_psr;
+    	sc_out<sc_uint<psr_size> > output_psr;		// [2]Carry : [1]Negative : [0]Zero
 
 		// Constructor
 		SC_HAS_PROCESS(alu);
@@ -87,36 +87,37 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
 		{
 			switch(cop)
 			{
-				case "100":
-					_alu_out = (_c4_out + _c2_out) | _c5_out;
-					cout = _c4_out[15] & _c2_out[15];
-					output_psr[0] = (_c4_out[15] == _c2_out[15]) ^ _alu_out[15];
+				case "011":
+					sc_uint<data_size+1> _carry_detect = _alu_in1 + _alu_in2;
+					_alu_out = _carry_detect.range(data_size-1, 0);
+					output_psr[2] = carry_detect[data_size];
 					output_psr[1] = _alu_out[15];
-					output_psr[2] = (_alu_out == 0);
+					output_psr[0] = (_alu_out == 0);
 					break;
 				case "000":
-					_alu_out = _c4_out & _c2_out;
-					output_psr[0] = '0';
+					_alu_out = _alu_in1 & _alu_in2;
+					output_psr[2] = '0';
 					output_psr[1] = '0';
-					output_psr[2] = (_alu_out == 0);
+					output_psr[0] = (_alu_out == 0);
 					break;
 				case "001":
-					_alu_out = _c4_out | _c2_out;
-					output_psr[0] = '0';
+					_alu_out = _alu_in1 | _alu_in2;
+					output_psr[2] = '0';
 					output_psr[1] = '0';
-					output_psr[2] = (_alu_out == 0);
+					output_psr[0] = (_alu_out == 0);
 					break;
 				case "010":
-					_alu_out = _c4_out ^ _c2_out;
-					output_psr[0] = '0';
+					_alu_out = _alu_in1 ^ _alu_in2;
+					output_psr[2] = '0';
 					output_psr[1] = '0';
-					output_psr[2] = (_alu_out == 0);
+					output_psr[0] = (_alu_out == 0);
 					break;
-				case "011":
+				case "100":
+					
 				case "101":
 				case "110":
 				case "111":
-					_alu_out = __c4_out;
+					_alu_out = _c4_out;
 					break;
 				default:
 					break;
