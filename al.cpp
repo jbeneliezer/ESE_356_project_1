@@ -1,13 +1,14 @@
 #include "systemc.h"
 
-template<int opcode_size, int psr_size, int data_size> class alu: public sc_module
+template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu: public sc_module
 {
 	public:
 		// Port declarations
     	sc_in<bool> clock, c1, c2, c3, c4, c5, c6;
-    	sc_in<sc_uint<opcode_size> > cop;
+    	sc_in<sc_uint<op_size> > cop;
     	sc_in<sc_uint<data_size> > input_r1, input_r2, input_imm, input_con;
-    	sc_out<sc_uint<data_size> > output_con, output_mar, output_rw;
+    	sc_out<sc_uint<data_size> > output_con, output_rw;
+    	sc_out<sc_uint<mem_addr_size> > output_mar;
     	sc_out<sc_uint<psr_size> > output_psr;		// [2]Carry : [1]Negative : [0]Zero
     	sc_inout<sc_uint<data_size> > inout_mdr;
 

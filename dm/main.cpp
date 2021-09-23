@@ -8,7 +8,7 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 		//PORTS
 		sc_out<bool> clock;
 		sc_out<sc_uint<addr_size> > addr;
-		sc_out<bool> en_read, en_write;
+		sc_out<bool> en_write;
 		sc_out<sc_uint<data_size> > data_in;
 
 		//CONSTRUCTOR
@@ -20,7 +20,6 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 
 		//PROCESS
 		void main() {
-			en_read = 1;
 			en_write = 1;
 			for (int i = 0; i < _size_of_test_data; i++) {
 				clock = 0;
@@ -79,7 +78,7 @@ int sc_main(int argc, char* argv[]) {
     //SIGNALS
 	sc_signal<bool> clock;
 	sc_signal<sc_uint<ADDR_SIZE> > addr;
-	sc_signal<bool> en_read, en_write;
+	sc_signal<bool> en_write;
 	sc_signal<sc_uint<DATA_SIZE> > data_in;
 	sc_signal<sc_uint<DATA_SIZE> > data_out;
 	
@@ -92,7 +91,6 @@ int sc_main(int argc, char* argv[]) {
     data_mem<size, ADDR_SIZE, DATA_SIZE> data_mem("data_mem", &data[0]);
 	data_mem.clock(clock);
 	data_mem.addr(addr);
-	data_mem.en_read(en_read);
 	data_mem.en_write(en_write);
 	data_mem.data_in(data_in);
 	data_mem.data_out(data_out);
@@ -100,7 +98,6 @@ int sc_main(int argc, char* argv[]) {
 	stimulus<ADDR_SIZE, DATA_SIZE> stim("stim", size);
 	stim.clock(clock);
 	stim.addr(addr);
-	stim.en_read(en_read);
 	stim.en_write(en_write);
 	stim.data_in(data_in);
 
@@ -111,7 +108,6 @@ int sc_main(int argc, char* argv[]) {
     sc_trace_file* tf = sc_create_vcd_trace_file("dm_trace");
     sc_trace(tf, clock, "clock");
     sc_trace(tf, addr, "addr");
-    sc_trace(tf, en_read, "en_read");
 	sc_trace(tf, en_write, "en_write");
     sc_trace(tf, data_in, "data_in");
 	sc_trace(tf, data_out, "data_out");
