@@ -39,7 +39,7 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
         	}
         	SC_METHOD(prc_alu)
         	{
-        	    sensitive << clock.pos();
+        	    sensitive << _c2_out << _c4_out << cop;
         	}
         	SC_METHOD(prc_c6)
         	{
@@ -93,32 +93,32 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 			sc_uint<data_size+1> _carry_detect;
 			switch(cop.read())
 			{
-				case 0b011:
+				case 0b011:											// ADD, ADDI, SUB, SUBI, CMP, CMPI, MOV, MOVI, LUI
 					_carry_detect = _alu_in1 + _alu_in2;
 					_alu_out = _carry_detect.range(data_size-1, 0);
 					psr[2] = _carry_detect[data_size];
 					psr[1] = _alu_out.read()[data_size-1];
 					psr[0] = (_alu_out.read() == 0);
 					break;
-				case 0b000:
+				case 0b000:											// AND, ANDI
 					_alu_out = _alu_in1 & _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
 					psr[0] = (_alu_out.read() == 0);
 					break;
-				case 0b001:
+				case 0b001:											// OR, ORI
 					_alu_out = _alu_in1 | _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
 					psr[0] = (_alu_out.read() == 0);
 					break;
-				case 0b010:
+				case 0b010:											// XOR, XORI, NOP
 					_alu_out = _alu_in1 ^ _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
 					psr[0] = (_alu_out.read() == 0);
 					break;
-				case 0b100:
+				case 0b100:											// LSH, LSHI, ASH, ASHI
 					if (_c5_out) {		//_c5_out == 1, arithmetic right shift
 						psr[2] = _alu_in2[(_alu_in1 ^ 0xFFFF)-1];	//negative for right shift
 						_alu_out = (sc_int<data_size>)_alu_in2 >> (_alu_in1 ^ 0xFFFF);
@@ -136,13 +136,9 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 					psr[1] = _alu_out.read()[data_size-1];
 					psr[0] = (_alu_out.read() == 0);
 					break;
-				case 0b101:
-					_alu_out = _alu_in1;
-					break;
-				case 0b110:
-					_alu_out = _alu_in1;
-					break;
-				case 0b111:
+				case 0b101:											// LOAD, STOR
+				case 0b110:											// Bcond
+				case 0b111:											// Jcond, JAL
 					_alu_out = _alu_in1;
 					break;
 				default:
