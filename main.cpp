@@ -53,8 +53,487 @@ template<int reg_addr_size, int mem_addr_size, int data_size, int alu_op_size> c
 			
 			rf_read();
 			
-			//ADDI r2, 12
+			//ADDI 12, r2
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 2, 2);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 0, 0, 0, 0b011);
+			rf_config(0, 1, 1, 0, 2, 2);
+			dm_config(0);
+			al_input_imm = 12;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
 			
+			rf_read();
+
+			//SUB r13, r12
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 13, 12, 12);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 1, 0, 0, 0b011);
+			rf_config(1, 1, 1, 13, 12, 12);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//SUBI 16, r12
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 12, 12);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 1, 0, 0, 0b011);
+			rf_config(0, 1, 1, 0, 12, 12);
+			dm_config(0);
+			al_input_imm = 16;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//CMP r14, r11
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 14, 11, 0);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 1, 0, 0, 0b011);
+			rf_config(1, 1, 0, 14, 11, 0);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//CMPI 16, r11
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 11, 0);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 1, 0, 0, 0b011);
+			rf_config(0, 1, 0, 0, 11, 0);
+			dm_config(0);
+			al_input_imm = 16;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//AND r9, r10
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 9, 10, 10);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b000);
+			rf_config(1, 1, 1, 9, 10, 10);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//ANDI 0, r10
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 10, 10);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 0, 0, 0, 0b000);
+			rf_config(0, 1, 1, 0, 10, 10);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//OR r5, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 5, 4, 4);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b001);
+			rf_config(1, 1, 1, 5, 4, 4);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//ORI 0xFF, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 4, 4);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 0, 0, 0, 0b001);
+			rf_config(0, 1, 1, 0, 4, 4);
+			dm_config(0);
+			al_input_imm = 0x00FF;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//XOR r5, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 5, 4, 4);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 1, 5, 4, 4);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//XORI 4, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 4, 4);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 0, 0, 0, 0b010);
+			rf_config(0, 1, 1, 0, 4, 4);
+			dm_config(0);
+			al_input_imm = 4;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			rf_read();
+
+			//MOV r6, r5
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 0, 0, 6, 0, 5);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 1, 0, 0, 0, 0, 0b011);
+			rf_config(1, 0, 1, 6, 0, 5);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//MOVI 8, r5
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 0, 0, 0, 0, 5);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 1, 1, 0, 0, 0, 0b011);
+			rf_config(0, 0, 1, 0, 0, 5);
+			dm_config(0);
+			al_input_imm = 8;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//LSH r7, r6
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 7, 6, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b100);
+			rf_config(1, 1, 1, 7, 6, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//LSHI 7, r6
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 6, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 0, 0, 0, 0b100);
+			rf_config(0, 1, 1, 0, 6, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//ASH r15, r7
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 15, 7, 7);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 1, 1, 0, 0b100);
+			rf_config(1, 1, 1, 15, 7, 7);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//ASHI 2, r8
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 1, 0, 0, 8, 8);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 1, 1, 1, 0, 0b100);
+			rf_config(0, 1, 1, 0, 8, 8);
+			dm_config(0);
+			al_input_imm = 2;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//LUI 0xFF, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(0, 0, 0, 0, 0, 4);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 1, 1, 0, 0, 0, 0b011);
+			rf_config(0, 0, 1, 0, 0, 4);
+			dm_config(0);
+			al_input_imm = 0xFF00;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//STOR r15, r6		dm[rf[r15]] = rf[r6]
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 1, 0, 15, 6, 0);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(1, 0, 0, 0, 0, 0, 0b101);
+			rf_config(1, 1, 0, 15, 6, 0);
+			dm_config(1);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//LOAD r6, r15		rf[r6] = dm[rf[r15]]
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 0, 0, 15, 0, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(1, 0, 0, 0, 0, 1, 0b101);
+			rf_config(1, 0, 1, 15, 0, 6);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//Jcond r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 0, 0, 4, 0, 0);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(1, 0, 0, 0, 0, 0, 0b111);
+			rf_config(1, 0, 0, 4, 0, 0);
+			dm_config(0);
+			al_input_imm = 0;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
+
+			//JAL r6, r4
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(0, 0, 0, 0, 0, 0, 0b010);
+			rf_config(1, 0, 0, 4, 0, 6);
+			dm_config(0);
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+
+			clock = 0;
+			wait(2.5, SC_NS);
+			alu_operation(1, 0, 0, 0, 0, 1, 0b111);
+			rf_config(1, 0, 1, 4, 0, 6);
+			dm_config(0);
+			al_input_imm = 0;
+			al_input_con = 100;
+			wait(2.5, SC_NS);
+			clock = 1;
+			wait(5, SC_NS);
+			
+			rf_read();
 		}
 	private:
 		int _size_of_rf;
@@ -109,7 +588,6 @@ template<int reg_addr_size, int mem_addr_size, int data_size, int alu_op_size> c
 				clock = 0;
 				wait(2.5, SC_NS);
 				
-				//dm_addr = i;
 				wait(2.5, SC_NS);
 				
 				clock = 1;
@@ -140,8 +618,8 @@ int sc_main(int argc, char* argv[]) {
 	sc_signal<sc_uint<DATA_SIZE> > con_imm, con_output, con_input;
 	
 	//LOCAL VAR
-	const int rf_data[] = {0, 12, 24, 24, 30, 0, 0, 0,
-						12, 34, 56, 0, -24, -12, 0, 1};
+	const int rf_data[] = {0, 12, 24, 24, 30, 5, 6, -7,
+						-12, 34, 56, 0, -24, -12, 0, 1};
 	const int rf_size = sizeof(rf_data) / sizeof(rf_data[0]);
 	
 	const int dm_data[] = {0, 1, 2, 3, 4, 5, 6, 7,
@@ -235,7 +713,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_trace(tf, con_input, "alu_output_con");
 
     //START SIM
-    sc_start(20 * 1 + (10 * rf_size), SC_NS);
+    sc_start((20 * 23) + ((10 * rf_size) * 23), SC_NS);
     
     sc_close_vcd_trace_file(tf);
 
