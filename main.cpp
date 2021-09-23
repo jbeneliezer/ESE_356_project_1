@@ -13,7 +13,7 @@ template<int reg_addr_size, int mem_addr_size, int data_size> class stimulus:pub
 	public:
 		//PORTS
 		sc_out<bool> clock;
-		sc_out<sc_uint<ref_addr_size> > rf_addr_r1, rf_addr_r2, rf_addr_rw;
+		sc_out<sc_uint<reg_addr_size> > rf_addr_r1, rf_addr_r2, rf_addr_rw;
 		sc_out<bool> rf_en_r1, rf_en_r2, rf_en_rw;
 		sc_out<sc_uint<data_size> > rf_data_rw;
 		
@@ -29,7 +29,7 @@ template<int reg_addr_size, int mem_addr_size, int data_size> class stimulus:pub
 		//CONSTRUCTOR
 		SC_HAS_PROCESS(stimulus);
 
-		stimulus(sc_module_name name, int size):sc_module(name) {
+		stimulus(sc_module_name name):sc_module(name) {
 			SC_THREAD(main);
 		}
 
@@ -160,7 +160,7 @@ int sc_main(int argc, char* argv[]) {
 	sc_trace(tf, con_input, "alu_output_con");
 
     //START SIM
-    sc_start(size * 10, SC_NS);
+    sc_start(10 * 10, SC_NS);
     
     sc_close_vcd_trace_file(tf);
 
