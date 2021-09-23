@@ -7,8 +7,9 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
     	sc_in<bool> clock, c1, c2, c3, c4, c5, c6;
     	sc_in<sc_uint<opcode_size> > cop;
     	sc_in<sc_uint<data_size> > input_r1, input_r2, input_imm, input_con;
-    	sc_out<sc_uint<data_size> > output_con, output_mdr, output_mar, output_rw;
+    	sc_out<sc_uint<data_size> > output_con, output_mar, output_rw;
     	sc_out<sc_uint<psr_size> > output_psr;		// [2]Carry : [1]Negative : [0]Zero
+    	sc_inout<sc_uint<data_size> > inout_mdr;
 
 		// Constructor
 		SC_HAS_PROCESS(alu);
@@ -74,7 +75,7 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
 		void prc_c4()
 		{
 			_c4_out = c4 ? _c3_out ^ 0xFFFF : _c3_out;
-			output_mdr = _c4_out;
+			inout_mdr = _c4_out;
 			_alu_in1 = _c4_out;
 		}
 
@@ -91,7 +92,7 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
 					sc_uint<data_size+1> _carry_detect = _alu_in1 + _alu_in2;
 					_alu_out = _carry_detect.range(data_size-1, 0);
 					output_psr[2] = carry_detect[data_size];
-					output_psr[1] = _alu_out[15];
+					output_psr[1] = _alu_out[data_size-1];
 					output_psr[0] = (_alu_out == 0);
 					break;
 				case "000":
@@ -113,11 +114,31 @@ template<int opcode_size, int psr_size, int data_size> class alu: public sc_modu
 					output_psr[0] = (_alu_out == 0);
 					break;
 				case "100":
-					
+					if (_c5_out) {		//_c5_out == 1, arithmetic right shift
+						output_psr[2] = _alu_in2[(_alu_in1 ^ 0xFFFF)-1];	//negative for right shift
+						_alu_out = (sc_int<data_size>)_alu_in2 >> (_alu_in1 ^ 0xFFFF);
+					}
+					else {				//_c5_out == 0, left shift or logical right shift
+						if ((sc_int<data_size>)_alu_in1 < 0) {				//negative for left shift
+							output_psr[2] = _alu_in2[data_size - (_alu_in1 ^ 0xFFFF)];
+							_alu_out = _alu_in2 << (_alu_in1 ^ 0xFFFF);
+						}
+						else {												//positive for right shift
+							output_psr[2] = _alu_in2[_alu_in1-1];
+							_alu_out = _alu_in2 >> _alu_in1;
+						}
+					}
+					output_psr[1] = _alu_out[data_size-1];
+					output_psr[0] = (_alu_out == 0);
+					break;
 				case "101":
+					_alu_out = _alu_in1;
+					break;
 				case "110":
+					_alu_out = _alu_in1;
+					break;
 				case "111":
-					_alu_out = _c4_out;
+					_alu_out = _alu_in1;
 					break;
 				default:
 					break;
