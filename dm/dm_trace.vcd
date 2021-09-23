@@ -1,5 +1,5 @@
 $date
-     Sep 19, 2021       16:55:12
+     Sep 19, 2021       17:11:47
 $end
 
 $version
@@ -13,10 +13,9 @@ $end
 $scope module SystemC $end
 $var wire    1  aaaaa  clock       $end
 $var wire   16  aaaab  addr [15:0]  $end
-$var wire    1  aaaac  en_read       $end
-$var wire    1  aaaad  en_write       $end
-$var wire   16  aaaae  data_in [15:0]  $end
-$var wire   16  aaaaf  data_out [15:0]  $end
+$var wire    1  aaaac  en_write       $end
+$var wire   16  aaaad  data_in [15:0]  $end
+$var wire   16  aaaae  data_out [15:0]  $end
 $upscope $end
 $enddefinitions  $end
 
@@ -28,9 +27,8 @@ $dumpvars
 0aaaaa
 b0 aaaab
 1aaaac
-1aaaad
+b0 aaaad
 b0 aaaae
-b0 aaaaf
 $end
 
 #5000
@@ -41,29 +39,27 @@ $end
 
 #12500
 b1 aaaab
-b1 aaaae
+b1 aaaad
 
 #15000
 1aaaaa
-b1100 aaaaf
 
 #20000
 0aaaaa
 
 #22500
 b10 aaaab
-b10 aaaae
+b10 aaaad
 
 #25000
 1aaaaa
-b11000 aaaaf
 
 #30000
 0aaaaa
 
 #32500
 b11 aaaab
-b11 aaaae
+b11 aaaad
 
 #35000
 1aaaaa
@@ -73,29 +69,27 @@ b11 aaaae
 
 #42500
 b100 aaaab
-b100 aaaae
+b100 aaaad
 
 #45000
 1aaaaa
-b11110 aaaaf
 
 #50000
 0aaaaa
 
 #52500
 b101 aaaab
-b101 aaaae
+b101 aaaad
 
 #55000
 1aaaaa
-b0 aaaaf
 
 #60000
 0aaaaa
 
 #62500
 b110 aaaab
-b110 aaaae
+b110 aaaad
 
 #65000
 1aaaaa
@@ -105,7 +99,7 @@ b110 aaaae
 
 #72500
 b111 aaaab
-b111 aaaae
+b111 aaaad
 
 #75000
 1aaaaa
@@ -115,101 +109,92 @@ b111 aaaae
 
 #82500
 b1000 aaaab
-b1000 aaaae
+b1000 aaaad
 
 #85000
 1aaaaa
-b1100 aaaaf
 
 #90000
 0aaaaa
 
 #92500
 b1001 aaaab
-b1001 aaaae
+b1001 aaaad
 
 #95000
 1aaaaa
-b100010 aaaaf
 
 #100000
 0aaaaa
 
 #102500
 b1010 aaaab
-b1010 aaaae
+b1010 aaaad
 
 #105000
 1aaaaa
-b111000 aaaaf
 
 #110000
 0aaaaa
 
 #112500
 b1011 aaaab
-b1011 aaaae
+b1011 aaaad
 
 #115000
 1aaaaa
-b0 aaaaf
 
 #120000
 0aaaaa
 
 #122500
 b1100 aaaab
-b1100 aaaae
+b1100 aaaad
 
 #125000
 1aaaaa
-b1111111111101000 aaaaf
 
 #130000
 0aaaaa
 
 #132500
 b1101 aaaab
-b1101 aaaae
+b1101 aaaad
 
 #135000
 1aaaaa
-b1111111111110100 aaaaf
 
 #140000
 0aaaaa
 
 #142500
 b1110 aaaab
-b1110 aaaae
+b1110 aaaad
 
 #145000
 1aaaaa
-b0 aaaaf
 
 #150000
 0aaaaa
 
 #152500
 b1111 aaaab
-b1111 aaaae
+b1111 aaaad
 
 #155000
 1aaaaa
-b1 aaaaf
 
 #160000
 0aaaaa
 
 #165000
-0aaaad
+0aaaac
 
 #167500
 b0 aaaab
 
 #170000
 1aaaaa
-b0 aaaaf
 
 #175000
 0aaaaa
@@ -219,7 +204,7 @@ b1 aaaab
 
 #180000
 1aaaaa
-b1 aaaaf
+b1 aaaae
 
 #185000
 0aaaaa
@@ -229,7 +214,7 @@ b10 aaaab
 
 #190000
 1aaaaa
-b10 aaaaf
+b10 aaaae
 
 #195000
 0aaaaa
@@ -239,7 +224,7 @@ b11 aaaab
 
 #200000
 1aaaaa
-b11 aaaaf
+b11 aaaae
 
 #205000
 0aaaaa
@@ -249,7 +234,7 @@ b100 aaaab
 
 #210000
 1aaaaa
-b100 aaaaf
+b100 aaaae
 
 #215000
 0aaaaa
@@ -259,7 +244,7 @@ b101 aaaab
 
 #220000
 1aaaaa
-b101 aaaaf
+b101 aaaae
 
 #225000
 0aaaaa
@@ -269,7 +254,7 @@ b110 aaaab
 
 #230000
 1aaaaa
-b110 aaaaf
+b110 aaaae
 
 #235000
 0aaaaa
@@ -279,7 +264,7 @@ b111 aaaab
 
 #240000
 1aaaaa
-b111 aaaaf
+b111 aaaae
 
 #245000
 0aaaaa
@@ -289,7 +274,7 @@ b1000 aaaab
 
 #250000
 1aaaaa
-b1000 aaaaf
+b1000 aaaae
 
 #255000
 0aaaaa
@@ -299,7 +284,7 @@ b1001 aaaab
 
 #260000
 1aaaaa
-b1001 aaaaf
+b1001 aaaae
 
 #265000
 0aaaaa
@@ -309,7 +294,7 @@ b1010 aaaab
 
 #270000
 1aaaaa
-b1010 aaaaf
+b1010 aaaae
 
 #275000
 0aaaaa
@@ -319,7 +304,7 @@ b1011 aaaab
 
 #280000
 1aaaaa
-b1011 aaaaf
+b1011 aaaae
 
 #285000
 0aaaaa
@@ -329,7 +314,7 @@ b1100 aaaab
 
 #290000
 1aaaaa
-b1100 aaaaf
+b1100 aaaae
 
 #295000
 0aaaaa
@@ -339,7 +324,7 @@ b1101 aaaab
 
 #300000
 1aaaaa
-b1101 aaaaf
+b1101 aaaae
 
 #305000
 0aaaaa
@@ -349,7 +334,7 @@ b1110 aaaab
 
 #310000
 1aaaaa
-b1110 aaaaf
+b1110 aaaae
 
 #315000
 0aaaaa
@@ -359,6 +344,6 @@ b1111 aaaab
 
 #320000
 1aaaaa
-b1111 aaaaf
+b1111 aaaae
 
 #325000
