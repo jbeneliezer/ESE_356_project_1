@@ -16,33 +16,9 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 
 		alu(sc_module_name name) : sc_module(name)
 		{
-			SC_METHOD(prc_c1)
-        	{
-            	sensitive << c1 << input_r1 << input_r2;
-        	}
-        	SC_METHOD(prc_c2)
-        	{
-            	sensitive << c2 << _c1_out2;
-        	}
-        	SC_METHOD(prc_c3)
-        	{
-        	    sensitive << c3 << _c1_out1;
-        	}
-        	SC_METHOD(prc_c4)
-        	{
-        	    sensitive << c4 << _c3_out;
-        	}
-        	SC_METHOD(prc_c5)
-        	{
-        	    sensitive << c5 << _c4_out;
-        	}
         	SC_METHOD(prc_alu)
         	{
-        	    sensitive << _c2_out << _c4_out << cop;
-        	}
-        	SC_METHOD(prc_c6)
-        	{
-        	    sensitive << c6 << _alu_out;
+        	    sensitive << clock.pos();
         	}
     	}
 

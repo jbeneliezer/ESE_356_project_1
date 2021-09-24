@@ -70,7 +70,7 @@ int sc_main(int argc, char* argv[]) {
 	const int size = sizeof(data) / sizeof(data[0]);
 
     //MODULES
-    prgm_mem<size, ADDR_SIZE, DATA_SIZE> prgm_mem("prgm_mem", &data[0]);
+    prgm_mem<size, ADDR_SIZE, DATA_SIZE> prgm_mem("prgm_mem", data);
 	prgm_mem.clock(clock);
 	prgm_mem.addr(addr);
 	prgm_mem.en_read(en_read);

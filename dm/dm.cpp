@@ -17,7 +17,7 @@ template<int size, int addr_size, int data_size> class data_mem:public sc_module
 			sensitive << clock.pos();
 			
 			for (int i = 0; i < size; i++) {
-				mem_data[i] = *(_data_ptr + i);	//tranfer data from main program to data memory
+				mem_data[i] = _data_ptr[i];	//tranfer data from main program to data memory
 			}
 		}
 	private:

@@ -22,7 +22,7 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 		void main() {
 			en_r1 = 1;
 			en_r2 = 1;
-			en_rw = 1;
+			en_rw = 0;
 			for (int i = 1; i < _size_of_test_data; i++) {
 				clock = 0;
 				wait(2.5, SC_NS);
@@ -30,12 +30,40 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 				addr_r1 = i;
 				addr_r2 = i-1;
 				addr_rw = i;
-				data_rw = i;
 				wait(2.5, SC_NS);
 				
 				clock = 1;
 				wait(5, SC_NS);
 			}
+			en_r1 = 0;
+			en_r2 = 0;
+			en_rw = 1;
+			for (int i = 1; i < _size_of_test_data; i++) {
+				clock = 0;
+				wait(2.5, SC_NS);
+				
+				addr_rw = i;
+				data_rw = (i * 2) % 0xFFFF;
+				wait(2.5, SC_NS);
+				
+				clock = 1;
+				wait(5, SC_NS);
+			}
+			en_r1 = 1;
+			en_r2 = 1;
+			en_rw = 0;
+			for (int i = 1; i < _size_of_test_data; i++) {
+				clock = 0;
+				wait(2.5, SC_NS);
+				
+				addr_r1 = i;
+				addr_r2 = i-1;
+				addr_rw = i;
+				wait(2.5, SC_NS);
+				
+				clock = 1;
+				wait(5, SC_NS);
+			}	
 		}
 
 		private:
@@ -78,7 +106,7 @@ int sc_main(int argc, char* argv[]) {
 	const int size = sizeof(data) / sizeof(data[0]);
 
     //MODULES
-    reg_file<size, ADDR_SIZE, DATA_SIZE> reg_file("reg_file", &data[0]);
+    reg_file<size, ADDR_SIZE, DATA_SIZE> reg_file("reg_file", data);
 	reg_file.clock(clock);
 	reg_file.addr_r1(addr_r1);
 	reg_file.addr_r2(addr_r2);
@@ -118,7 +146,7 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf, data_rw, "data_rw");
 
     //START SIM
-    sc_start(size * 10, SC_NS);
+    sc_start(size * 3 * 10, SC_NS);
     
     sc_close_vcd_trace_file(tf);
 

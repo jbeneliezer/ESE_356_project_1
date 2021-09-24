@@ -20,13 +20,12 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 
 		//PROCESS
 		void main() {
-			en_write = 1;
+			en_write = 0;
 			for (int i = 0; i < _size_of_test_data; i++) {
 				clock = 0;
 				wait(2.5, SC_NS);
 				
 				addr = i;
-				data_in = i;
 				wait(2.5, SC_NS);
 				
 				clock = 1;
@@ -35,13 +34,14 @@ template<int addr_size, int data_size> class stimulus:public sc_module {
 			
 			clock = 0;
 			wait(5, SC_NS);
-			en_write = 0;
+			en_write = 1;
 
 			for (int i = 0; i < _size_of_test_data; i++) {
 				clock = 0;
 				wait(2.5, SC_NS);
 				
 				addr = i;
+				data_in = i;
 				wait(2.5, SC_NS);
 				
 				clock = 1;
@@ -88,7 +88,7 @@ int sc_main(int argc, char* argv[]) {
 	const int size = sizeof(data) / sizeof(data[0]);
 
     //MODULES
-    data_mem<size, ADDR_SIZE, DATA_SIZE> data_mem("data_mem", &data[0]);
+    data_mem<size, ADDR_SIZE, DATA_SIZE> data_mem("data_mem", data);
 	data_mem.clock(clock);
 	data_mem.addr(addr);
 	data_mem.en_write(en_write);
