@@ -77,18 +77,10 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 
 			switch(cop.read())
 			{
-<<<<<<< HEAD
 				case 0b011:											// ADD, ADDI, SUB, SUBI, CMP, CMPI, MOV, MOVI, LUI
-					_carry_detect = _alu_in1 + _alu_in2;
-					_alu_out = _carry_detect.range(data_size-1, 0);
-					psr[2] = _carry_detect[data_size];
-					psr[1] = _alu_out[data_size-1];
-=======
-				case 0b011:
 					_alu_out = _alu_in1 + _alu_in2;
 					psr[2] = _alu_out >> data_size;
 					psr[1] = _alu_out >> (data_size-1);
->>>>>>> 001879ba65dc6bd608a5c3acef7b91be1485a56f
 					psr[0] = (_alu_out == 0);
 					break;
 				case 0b000:											// AND, ANDI
