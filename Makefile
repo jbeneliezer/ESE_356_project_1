@@ -10,3 +10,4 @@ project1: $(obj)
 
 clean:
 	rm project1 
+	rm *.vcd
