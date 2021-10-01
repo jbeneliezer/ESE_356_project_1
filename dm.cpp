@@ -28,10 +28,12 @@ template<int size, int addr_size, int data_size> class data_mem:public sc_module
 		//PROCESS
 		void mem_access() {
 			if (en_write.read()) {
-				mem_data[addr.read()] = data_in.read();
+				if (addr.read() < size)
+					mem_data[addr.read()] = data_in.read();
 			}
 			else {
-				data_out = mem_data[addr.read()];
+				if (addr.read() < size)
+					data_out = mem_data[addr.read()];
 			}
 		}
 };

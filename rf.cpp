@@ -34,19 +34,19 @@ template<int size, int addr_size, int data_size> class reg_file:public sc_module
 		//PROCESS
 		void r1_read() {
 			if (en_r1.read()) {
-				data_r1 = reg_data[addr_r1.read()];
+				data_r1.write(reg_data[addr_r1.read()]);
 			}
 		}
 		
 		void r2_read() {
 			if (en_r2.read()) {
-				data_r2 = reg_data[addr_r2.read()];
+				data_r2.write(reg_data[addr_r2.read()]);
 			}
 		}
 		
 		void rw_write() {
 			if (en_rw.read()) {
-				reg_data[addr_rw.read()] = data_rw;
+				reg_data[addr_rw.read()] = data_rw.read();
 			}
 		}
 };
