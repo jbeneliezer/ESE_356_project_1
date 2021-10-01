@@ -16,18 +16,33 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 
 		alu(sc_module_name name) : sc_module(name)
 		{
-        	SC_METHOD(prc_alu)
-        	{
-        	    sensitive << clock.pos();
-        	}
+			SC_METHOD(prc_c1);
+			sensitive << c1 << input_r1 << input_r2;
+			
+			SC_METHOD(prc_c2);
+			sensitive << c2 << _c1_out2;
+
+			SC_METHOD(prc_c3);
+			sensitive << c3 << input_imm << _c1_out1;
+
+			SC_METHOD(prc_c4);
+			sensitive << c4 << _c3_out;
+
+			SC_METHOD(prc_c5);
+			sensitive << c5 << _c4_out;
+
+        	SC_METHOD(prc_alu);
+			sensitive << cop << _c2_out << _c4_out << _c5_out;
+
+			SC_METHOD(prc_c6);
+			sensitive << c6 << input_con << _alu_out;
     	}
 
 	private:
 		// Local signals
-    	uint _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out;
-    	bool _c5_out;
-		uint _alu_out;
-		uint _alu_in1, _alu_in2;
+    	sc_signal<sc_uint<data_size> > _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out;
+    	sc_signal<bool> _c5_out;
+		sc_signal<sc_uint<data_size> > _alu_out;
 		sc_uint<psr_size> psr;
 
 		// Process
@@ -39,106 +54,104 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 
 		void prc_c2()
 		{
-			_c2_out = c2.read() ? 0 : _c1_out2;
-			output_mar = _c2_out;
-			output_con = _c2_out;
-			_alu_in2 = _c2_out;
+			sc_uint<data_size> _out = c2.read() ? (sc_uint<data_size>)0 : _c1_out2.read();
+			_c2_out = _out;
+			output_mar = _out;
+			output_con = _out;
 		}
 
 		void prc_c3()
 		{
-			if (c3.read()) {
-				_c3_out = input_imm.read();
-			}
-			else {
-				_c3_out = _c1_out1;
-			}
+			_c3_out = c3.read() ? input_imm.read() : _c1_out1.read();
 		}
 
 		void prc_c4()
 		{
-			_c4_out = c4.read() ? ~_c3_out : _c3_out;
-			output_mdr = _c4_out;
-			_alu_in1 = _c4_out;
+			sc_uint<data_size> _out = c4.read() ? (sc_uint<data_size>)(_c3_out.read() ^ 0xFF)
+								: _c3_out.read();
+			_c4_out = _out;
+			output_mdr = _out;
 		}
 
 		void prc_c5()
 		{
-			_c5_out = c5.read() ? _c4_out >> (data_size-1) : false;
+			_c5_out = c5.read() ? (bool)_c4_out.read()[data_size-1] : true;
 		}
 
 		void prc_alu()
 		{
-			prc_c1();
-			prc_c2();
-			prc_c3();
-			prc_c4();
-			prc_c5();
+			sc_uint<data_size> _alu_in1 = _c4_out.read(), _alu_in2 = _c2_out.read();
+			sc_uint<data_size> _out;
+			sc_uint<data_size+1> _carry_detect;
+			sc_uint<4> _shift_amt = _alu_in1;
 
 			switch(cop.read())
 			{
-				case 0b011:											// ADD, ADDI, SUB, SUBI, CMP, CMPI, MOV, MOVI, LUI
-					_alu_out = _alu_in1 + _alu_in2;
-					psr[2] = _alu_out >> data_size;
-					psr[1] = _alu_out >> (data_size-1);
-					psr[0] = (_alu_out == 0);
+				case 0b011:
+					_carry_detect = _alu_in1 + _alu_in2;
+					_out = _carry_detect.range(data_size-1, 0);
+					psr[2] = _carry_detect[data_size];
+					psr[1] = _out[data_size-1];
+					psr[0] = (_out == 0);
 					break;
-				case 0b000:											// AND, ANDI
-					_alu_out = _alu_in1 & _alu_in2;
+				case 0b000:
+					_out = _alu_in1 & _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
-					psr[0] = (_alu_out == 0);
+					psr[0] = (_out == 0);
 					break;
-				case 0b001:											// OR, ORI
-					_alu_out = _alu_in1 | _alu_in2;
+				case 0b001:
+					_out = _alu_in1 | _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
-					psr[0] = (_alu_out == 0);
+					psr[0] = (_out == 0);
 					break;
-				case 0b010:											// XOR, XORI, NOP
-					_alu_out = _alu_in1 ^ _alu_in2;
+				case 0b010:
+					_out = _alu_in1 ^ _alu_in2;
 					psr[2] = '0';
 					psr[1] = '0';
-					psr[0] = (_alu_out == 0);
+					psr[0] = (_out == 0);
 					break;
-				case 0b100:											// LSH, LSHI, ASH, ASHI
-					if (_c5_out) {		//_c5_out == 1, arithmetic right shift
-						psr[2] = (_alu_in2 >> (~_alu_in1-1)) & 0b1;			//negative for right shift
-						_alu_out = _alu_in2 >> (~_alu_in1);
-					}
-					else {				//_c5_out == 0, left shift or logical right shift
-						if (_alu_in1 < 0) {									//negative for left shift
-							psr[2] = (_alu_in1 >> (data_size - ~_alu_in1)) & 0b1;
-							_alu_out = _alu_in2 << ~_alu_in1;
+				case 0b100:
+					if (_shift_amt != 0) {	//Do not attempt a shift if given 0 to avoid invalid index
+						if (!_c5_out) {		//_c5_out == 0, arithmetic right shift
+							psr[2] = _alu_in2[_shift_amt-1];
+							_out = _alu_in2 >> _shift_amt;
 						}
-						else {												//positive for right shift
-							psr[2] = (_alu_in2 >> (_alu_in1-1)) & 0b1;
-							_alu_out = _alu_in2 >> _alu_in1;
+						else {				//_c5_out == 1, left shift or logical right shift
+							if (_shift_amt[3] == 1) {		//if shift_amt is negative
+								_shift_amt = ~_shift_amt;	//invert shift_amt back to a positive number
+								psr[2] = _alu_in1[data_size - _shift_amt];
+								_out = _alu_in2 << _shift_amt;
+							}
+							else {
+								psr[2] = _alu_in2[_shift_amt];
+								_out = _alu_in2 >> _shift_amt;
+							}
 						}
 					}
-					psr[1] = _alu_out >> (data_size-1) & 0b1;
-					psr[0] = (_alu_out == 0);
+					psr[1] = _out[data_size-1];
+					psr[0] = (_out == 0);
 					break;
-				case 0b101:											// LOAD, STOR
-				case 0b110:											// Bcond
-				case 0b111:											// Jcond, JAL
-					_alu_out = _alu_in1;
+				case 0b101:
+					_out = _alu_in1;
+					break;
+				case 0b110:
+					_out = _alu_in1;
+					break;
+				case 0b111:
+					_out = _alu_in1;
 					break;
 				default:
 					break;
 			}
 
+			_alu_out = _out;
 			output_psr = psr;
-			prc_c6();
 		}
 
 		void prc_c6()
 		{
-			if (c6.read()) {
-				output_rw = input_con.read();
-			}
-			else {
-				output_rw = _alu_out;
-			}
+			output_rw = c6.read() ? input_con.read() : _alu_out;
 		}
 };
