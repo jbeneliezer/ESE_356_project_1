@@ -13,7 +13,7 @@ template<int size, int addr_size, int data_size> class prgm_mem:public sc_module
 		
 		prgm_mem(sc_module_name name, const int* data_ptr):sc_module(name), _data_ptr(data_ptr) {
 			SC_METHOD(mem_read);
-			sensitive << clock;
+			sensitive << clock.pos();
 			
 			for (int i = 0; i < size; i++) {
 				mem_data[i] = *(_data_ptr + i);	//tranfer data from main program to program memory
@@ -27,8 +27,7 @@ template<int size, int addr_size, int data_size> class prgm_mem:public sc_module
 		//PROCESS
 		void mem_read() {
 			if (en_read.read()) {
-				if (addr.read() < size)
-					data_out = mem_data[addr.read()];
+				data_out = mem_data[addr.read()];
 			}
 		}
 };

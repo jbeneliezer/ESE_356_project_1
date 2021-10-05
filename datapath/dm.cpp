@@ -20,17 +20,6 @@ template<int size, int addr_size, int data_size> class data_mem:public sc_module
 				mem_data[i] = *(_data_ptr + i);	//tranfer data from main program to data memory
 			}
 		}
-
-		void dm_read() {
-			cout << "{";
-			for (int i = 0; i < size; i++) {
-				cout << mem_data[i];
-				if (i != size-1) {
-					cout << ", ";
-				}
-			}
-			cout << "}" << endl;
-		}
 	private:
 		//LOCAL VAR
 		const int* _data_ptr;					//pointer to received data
