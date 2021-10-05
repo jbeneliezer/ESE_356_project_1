@@ -26,17 +26,6 @@ template<int size, int addr_size, int data_size> class reg_file:public sc_module
 				reg_data[i] = *(_data_ptr + i);	//tranfer data from main program to registers
 			}
 		}
-
-		void rf_read() {
-			cout << "{";
-			for (int i = 0; i < size; i++) {
-				cout << reg_data[i];
-				if (i != size-1) {
-					cout << ", ";
-				}
-			}
-			cout << "}" << endl;
-		}
 	private:
 		//LOCAL VAR
 		const int* _data_ptr;				//pointer to received data

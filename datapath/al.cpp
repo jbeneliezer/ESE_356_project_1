@@ -26,33 +26,24 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 			sensitive << c3 << input_imm << _c1_out1;
 
 			SC_METHOD(prc_c4);
-			sensitive << c4 << _c3_out << clock.pos();
+			sensitive << c4 << _c3_out;
 
 			SC_METHOD(prc_c5);
-			sensitive << c5 << _c4_out << clock.pos();
+			sensitive << c5 << _c4_out;
 
         	SC_METHOD(prc_alu);
 			sensitive << cop << _c2_out << _c4_out << _c5_out;
 
 			SC_METHOD(prc_c6);
-			sensitive << c6 << input_con << _alu_out << _rw_buffer[1];
-
-			SC_METHOD(rw_buffer);
-			sensitive << clock.pos();
+			sensitive << c6 << input_con << _alu_out;
     	}
 
-		void psr_print() {
-			cout << output_psr.read()[0]
-				 << output_psr.read()[1] 
-				 << output_psr.read()[0] << endl;
-		}
 	private:
 		// Local signals
     	sc_signal<sc_uint<data_size> > _c1_out1, _c1_out2, _c2_out, _c3_out, _c4_out;
     	sc_signal<bool> _c5_out;
 		sc_signal<sc_uint<data_size> > _alu_out;
-		sc_uint<psr_size> _psr;
-		sc_signal<sc_uint<data_size> > _rw_buffer[2];
+		sc_uint<psr_size> psr;
 
 		// Process
 		void prc_c1()
@@ -76,7 +67,7 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 
 		void prc_c4()
 		{
-			sc_uint<data_size> _out = c4.read() ? (sc_uint<data_size>)((_c3_out.read() ^ 0xFFFF) + 1)
+			sc_uint<data_size> _out = c4.read() ? (sc_uint<data_size>)(_c3_out.read() ^ 0xFF)
 								: _c3_out.read();
 			_c4_out = _out;
 			output_mdr = _out;
@@ -99,34 +90,48 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 				case 0b011:
 					_carry_detect = _alu_in1 + _alu_in2;
 					_out = _carry_detect.range(data_size-1, 0);
-					_psr[2] = _carry_detect[data_size];
-					_psr[1] = _out[data_size-1];
-					output_psr = _psr;
+					psr[2] = _carry_detect[data_size];
+					psr[1] = _out[data_size-1];
+					psr[0] = (_out == 0);
 					break;
 				case 0b000:
 					_out = _alu_in1 & _alu_in2;
+					psr[2] = '0';
+					psr[1] = '0';
+					psr[0] = (_out == 0);
 					break;
 				case 0b001:
 					_out = _alu_in1 | _alu_in2;
+					psr[2] = '0';
+					psr[1] = '0';
+					psr[0] = (_out == 0);
 					break;
 				case 0b010:
 					_out = _alu_in1 ^ _alu_in2;
+					psr[2] = '0';
+					psr[1] = '0';
+					psr[0] = (_out == 0);
 					break;
 				case 0b100:
 					if (_shift_amt != 0) {	//Do not attempt a shift if given 0 to avoid invalid index
 						if (!_c5_out) {		//_c5_out == 0, arithmetic right shift
+							psr[2] = _alu_in2[_shift_amt-1];
 							_out = _alu_in2 >> _shift_amt;
 						}
 						else {				//_c5_out == 1, left shift or logical right shift
 							if (_shift_amt[3] == 1) {		//if shift_amt is negative
 								_shift_amt = ~_shift_amt;	//invert shift_amt back to a positive number
+								psr[2] = _alu_in1[data_size - _shift_amt];
 								_out = _alu_in2 << _shift_amt;
 							}
 							else {
+								psr[2] = _alu_in2[_shift_amt];
 								_out = _alu_in2 >> _shift_amt;
 							}
 						}
 					}
+					psr[1] = _out[data_size-1];
+					psr[0] = (_out == 0);
 					break;
 				case 0b101:
 					_out = _alu_in1;
@@ -142,15 +147,11 @@ template<int op_size, int psr_size, int mem_addr_size, int data_size> class alu:
 			}
 
 			_alu_out = _out;
+			output_psr = psr;
 		}
 
 		void prc_c6()
 		{
-			output_rw = c6.read() ? input_con.read() : _rw_buffer[1].read();
-		}
-
-		void rw_buffer() {
-			_rw_buffer[1] = _rw_buffer[0];
-			_rw_buffer[0] = _alu_out;
+			output_rw = c6.read() ? input_con.read() : _alu_out;
 		}
 };
